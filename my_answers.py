@@ -90,18 +90,20 @@ class NeuralNetwork(object):
         # TODO: Output error - Replace this value with your calculations.
         error = y - final_outputs # Output layer error is the difference between desired target and actual output.
         
-        # TODO: Calculate the hidden layer's contribution to the error
-        hidden_error = np.dot(self.weights_hidden_to_output, error)
-        
         # TODO: Backpropagated error terms - Replace these values with your calculations.
         output_error_term = error
+        
+        # TODO: Calculate the hidden layer's contribution to the error
+        hidden_error = np.dot(self.weights_hidden_to_output,output_error_term)
         
         hidden_error_term = hidden_error * hidden_outputs * (1 - hidden_outputs)
         
         # Weight step (input to hidden)
-        delta_weights_i_h += hidden_error_term * self.activation_function(np.dot(X,self.weights_input_to_hidden))
-        # Weight step (hidden to output)
-        delta_weights_h_o += output_error_term * self.activation_function(np.dot(hidden_outputs,self.weights_hidden_to_output))
+        delta_weights_i_h += [hidden_error_term * X[0] ,hidden_error_term * X[1] ,hidden_error_term * X[2]]
+        
+        # Weight step (hidden to output) 
+        delta_weights_h_o += [output_error_term * hidden_outputs[0], output_error_term * hidden_outputs[1]]
+        
         return delta_weights_i_h, delta_weights_h_o
 
     def update_weights(self, delta_weights_i_h, delta_weights_h_o, n_records):
@@ -115,8 +117,9 @@ class NeuralNetwork(object):
 
         '''
         self.weights_hidden_to_output += self.lr * delta_weights_h_o / n_records # update hidden-to-output weights with gradient descent step
+        
         self.weights_input_to_hidden += self.lr * delta_weights_i_h / n_records # update input-to-hidden weights with gradient descent step
-
+        
     def run(self, features):
         ''' Run a forward pass through the network with input features 
         
